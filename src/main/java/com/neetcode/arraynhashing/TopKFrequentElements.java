@@ -1,4 +1,4 @@
-package com.swing.arraynhashing;
+package com.neetcode.arraynhashing;
 
 import java.util.*;
 
