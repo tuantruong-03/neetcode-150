@@ -47,6 +47,14 @@ public class ValidSudoku {
     }
 
     // Solution 2
+    //    +-------+-------+-------+
+    //    | Box 0 | Box 1 | Box 2 |
+    //    |-------|-------|-------|
+    //    | Box 3 | Box 4 | Box 5 |
+    //    |-------|-------|-------|
+    //    | Box 6 | Box 7 | Box 8 |
+    //    +-------+-------+-------+
+
 
     public boolean isValidSudoku(char[][] board) {
         HashSet<Character>[] rows = new HashSet[board.length];
