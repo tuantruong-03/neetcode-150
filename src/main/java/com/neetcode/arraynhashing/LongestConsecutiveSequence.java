@@ -1,7 +1,6 @@
 package com.neetcode.arraynhashing;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class LongestConsecutiveSequence {
     // Solution 1
