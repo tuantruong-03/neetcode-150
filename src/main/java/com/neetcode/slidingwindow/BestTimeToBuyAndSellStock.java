@@ -1,4 +1,4 @@
-package com.neetcode.twopointers;
+package com.neetcode.slidingwindow;
 
 public class BestTimeToBuyAndSellStock {
     public int maxProfit(int[] prices) {

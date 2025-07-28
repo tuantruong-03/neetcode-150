@@ -1,4 +1,4 @@
-package com.neetcode.arraynhashing;
+package com.neetcode.twopointers;
 
 
 import java.util.*;
