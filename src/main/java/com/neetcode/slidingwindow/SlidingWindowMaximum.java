@@ -1,7 +1,6 @@
 package com.neetcode.slidingwindow;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class SlidingWindowMaximum {
     // Solution 1
@@ -41,5 +40,26 @@ public class SlidingWindowMaximum {
         }
         return maxIndex;
     }
+
+    public int[] maxSlidingWindow(int[] nums, int k) {
+        int n = nums.length;
+        List<Integer> res = new ArrayList<>();
+        Deque<Integer> deque = new LinkedList<>();
+        for (int i = 0; i < n; ++i) {
+            if (!deque.isEmpty() && deque.peekFirst() <= i -k) {
+                deque.pollFirst();
+            }
+            while (!deque.isEmpty() && nums[deque.peekLast()] < nums[i]) {
+                deque.pollLast();
+            }
+            // At this step, it's ensure that the numbers at the head indexes of queue are greater than the number at i index
+            deque.offerLast(i);
+            if (i >= k -1) {
+                res.add(nums[deque.peekFirst()]);
+            }
+        }
+        return res.stream().mapToInt(i->i).toArray();
+    }
+
 
 }
