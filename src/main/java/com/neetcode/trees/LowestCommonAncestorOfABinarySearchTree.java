@@ -28,4 +28,17 @@ public class LowestCommonAncestorOfABinarySearchTree {
         }
         return rightContains || leftContains;
     }
+
+    public TreeNode lowestCommonAncestorSolution2(TreeNode root, TreeNode p, TreeNode q) {
+        while (root != null) {
+            if (p.val < root.val && q.val < root.val) {
+                root = root.left;  // Both in left subtree
+            } else if (p.val > root.val && q.val > root.val) {
+                root = root.right; // Both in right subtree
+            } else {
+                return root;       // Split point or equal → LCA
+            }
+        }
+        return null;
+    }
 }
