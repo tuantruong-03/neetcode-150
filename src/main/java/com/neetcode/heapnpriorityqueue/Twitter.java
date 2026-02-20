@@ -21,84 +21,62 @@ public class Twitter {
 
     public List<Integer> getNewsFeed(int userId) {
 
-        // Get all followees of the user (people he follows)
-        // If user follows no one, return empty map
-        Map<Integer, Boolean> followeeIds = followings.getOrDefault(userId, new HashMap<>());
+        List<Integer> followeeIds =
+                followings.getOrDefault(userId, new HashMap<>())
+                        .keySet()
+                        .stream()
+                        .toList();
 
-        // Cursor map:
-        // For each user (self + followees), we store how many tweets we already consumed
-        // Key   -> userId
-        // Value -> offset from the latest tweet (0 = newest)
+        // Max-heap ordered by timestamp (latest first)
+        PriorityQueue<Tweet> tweetPQ =
+                new PriorityQueue<>((a, b) -> b.createdAt - a.createdAt);
+
+        // Cursor map: userId -> current index in that user's tweet list
         Map<Integer, Integer> cursors = new HashMap<>();
 
-        // User should see their own tweets as well
-        cursors.put(userId, 0);
-
-        // Add all followees into cursor map
-        for (Map.Entry<Integer, Boolean> entry : followeeIds.entrySet()) {
-            cursors.put(entry.getKey(), 0);
+        // 1️⃣ Add user's own latest tweet (if exists)
+        List<Tweet> selfTweets = tweets.get(userId);
+        if (!isNullOrEmpty(selfTweets)) {
+            int lastIndex = selfTweets.size() - 1;
+            cursors.put(userId, lastIndex);
+            tweetPQ.add(selfTweets.get(lastIndex));
         }
 
-        // Result list (maximum 10 tweets)
+        // 2️⃣ Add each followee's latest tweet (if exists)
+        for (Integer followeeId : followeeIds) {
+            List<Tweet> followeeTweets = tweets.get(followeeId);
+            if (isNullOrEmpty(followeeTweets)) continue;
+
+            int lastIndex = followeeTweets.size() - 1;
+            cursors.put(followeeId, lastIndex);
+            tweetPQ.add(followeeTweets.get(lastIndex));
+        }
+
+        // 3️⃣ Extract up to 10 most recent tweets
         List<Integer> newsFeed = new ArrayList<>();
 
-        // Max-heap ordered by tweet timestamp (latest first)
-        PriorityQueue<Tweet> tweetPQ =
-                new PriorityQueue<>((a, b) -> Math.toIntExact(b.createdAt - a.createdAt));
+        while (!tweetPQ.isEmpty() && newsFeed.size() < 10) {
 
-        // This map ensures that in each round we only push ONE tweet per user
-        // Prevents duplicate pushes within same iteration
-        Map<String, Boolean> visited = new HashMap<>();
-
-        // We need at most 10 tweets
-        for (int i = 0; i < 10; ++i) {
-
-            // Try to push the next available tweet from each user
-            Iterator<Map.Entry<Integer, Integer>> iterator = cursors.entrySet().iterator();
-            while (iterator.hasNext()) {
-                Map.Entry<Integer, Integer> cursor = iterator.next();
-                Integer followeeId = cursor.getKey();
-                // Get that user's tweet list
-                List<Tweet> followeeTweets =
-                        tweets.getOrDefault(followeeId, new ArrayList<>());
-
-                // Calculate index from newest to oldest
-                int index = followeeTweets.size() - 1 - cursor.getValue();
-
-                // If no more tweets from this user, remove from cursors
-                if (index < 0) {
-                    iterator.remove();
-                    continue;
-                }
-                // Get the next latest tweet
-                Tweet followeeLatestTweet = followeeTweets.get(index);
-                String key = String.format("tweet_id:%s:user_id:%s", followeeLatestTweet.id, followeeLatestTweet.userId);
-                if (visited.containsKey(key)) {
-                    continue;
-                }
-                // Push into max heap
-                tweetPQ.add(followeeLatestTweet);
-
-                // Mark this user as pushed for this round
-                visited.put(key, true);
-            }
-
-            // If no tweets left at all → stop
-            if (tweetPQ.isEmpty()) break;
-
-            // Get the globally latest tweet
+            // Get most recent tweet globally
             Tweet latestTweet = tweetPQ.remove();
-
-            // Move cursor forward for that tweet's owner
-            if (cursors.containsKey(latestTweet.userId)) {
-                cursors.put(latestTweet.userId,cursors.get(latestTweet.userId) + 1);
-            }
-
-            // Add tweet id to result
             newsFeed.add(latestTweet.id);
+
+            int ownerId = latestTweet.userId;
+
+            // Move cursor to previous tweet of that user
+            int index = cursors.get(ownerId) - 1;
+
+            if (index >= 0) {
+                cursors.put(ownerId, index);
+                tweetPQ.add(tweets.get(ownerId).get(index));
+            }
         }
 
         return newsFeed;
+    }
+
+    private boolean isNullOrEmpty(List<?> list) {
+        return list == null || list.isEmpty();
     }
 
     public void follow(int followerId, int followeeId) {
