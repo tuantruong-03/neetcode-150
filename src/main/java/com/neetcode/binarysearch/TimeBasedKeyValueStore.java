@@ -33,7 +33,6 @@ public class TimeBasedKeyValueStore {
             map.put(key, entries);
         }
 
-//
         public String get(String key, int timestamp) {
             List<Entry> entries = map.get(key);
             if (entries == null) {
@@ -62,6 +61,57 @@ public class TimeBasedKeyValueStore {
                 this.value = value;
                 this.timestamp = timestamp;
             }
+        }
+    }
+}
+
+class TimeBasedKeyValueStorePractice {
+    class TimeMap {
+        private Map<String, List<Entry>> map;
+        public TimeMap() {
+            map = new HashMap<>();
+        }
+
+        public void set(String key, String value, int timestamp) {
+            List<Entry> list = map.getOrDefault(key, new ArrayList<>());
+            list.add(new Entry(value, timestamp));
+            map.put(key, list);
+        }
+
+        public String get(String key, int timestamp) {
+            List<Entry> list = map.getOrDefault(key, new ArrayList<>());
+            if (list.isEmpty()) return "";
+            int l = 0;
+            int r = list.size() - 1;
+            // set() is called with strictly increasing timestamps for the same key.
+            // so "list" is the ascending order list by timestamps
+             while (l <= r) {
+                 int mid = (l + r)/2;
+                 Entry e = list.get(mid);
+                 if (timestamp == e.timestamp) return e.value;
+                 if (timestamp < e.timestamp) {
+                     r = mid -1;
+                 } else {
+                     l = mid + 1;
+                 }
+             }
+             // When loop "while (l <= r)" breaks, l = r + 1,
+             // r = largest timestamp ≤ target
+             // l = first timestamp > target
+            if (r >= 0) {
+                return list.get(r).value;
+            }
+             return "";
+        }
+    }
+
+    class Entry {
+        String value;
+        int timestamp;
+
+        Entry(String value, int timestamp) {
+            this.value = value;
+            this.timestamp = timestamp;
         }
     }
 }

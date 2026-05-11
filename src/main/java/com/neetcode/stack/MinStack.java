@@ -89,3 +89,52 @@ class MinStack2 {
         return top.min;
     }
 }
+
+class MinStackPractice {
+    private Stack<Integer> internalStack;
+    private Stack<Integer> minStack;
+    public MinStackPractice() {
+        internalStack = new Stack<>();
+        minStack = new Stack<>();
+    }
+
+    public void push(int val) {
+        internalStack.push(val);
+        if (!minStack.isEmpty()) {
+            int peek = minStack.peek();
+            if (val <= peek) {
+                minStack.push(val);
+            }
+            return;
+        }
+        minStack.push(val);
+    }
+
+    public void pop() {
+        int pop = internalStack.pop();
+        if (!minStack.isEmpty()) {
+            int peek = minStack.peek();
+            if (pop == peek) {
+                minStack.pop();
+            }
+        }
+    }
+
+    public int top() {
+        return internalStack.peek();
+    }
+
+    public int getMin() {
+        return !minStack.isEmpty() ? minStack.peek() : -1;
+    }
+
+    public static void main(String[] args) {
+        MinStackPractice practice = new MinStackPractice();
+        practice.push(-2);
+        practice.push(-0);
+        practice.push(-1);
+        practice.getMin();
+        practice.top();
+        practice.pop();
+    }
+}

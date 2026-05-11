@@ -69,3 +69,21 @@ public class DailyTemperatures {
     }
 
 }
+
+class DailyTemperaturesPractice {
+    public int[] dailyTemperatures(int[] temperatures) {
+        int n = temperatures.length;
+        int [] res = new int[n];
+        // Iterate from the last element backward to the first element,
+        // push the index of warmer day to the stack
+        Stack<Integer> warmerStack = new Stack<>();
+        for (int i = n-1; i >= 0; --i) {
+            while (!warmerStack.isEmpty() && temperatures[i] >= temperatures[warmerStack.peek()]) {
+                warmerStack.pop();
+            }
+            res[i] = warmerStack.isEmpty() ? 0 : warmerStack.peek() - i;
+            warmerStack.push(i);
+        }
+        return res;
+    }
+}

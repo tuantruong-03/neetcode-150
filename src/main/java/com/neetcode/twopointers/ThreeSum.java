@@ -33,3 +33,33 @@ public class ThreeSum {
         return triplets;
     }
 }
+
+class ThreeSumPractice {
+    public List<List<Integer>> threeSum(int[] nums) {
+       Arrays.sort(nums);
+       List<List<Integer>> res = new ArrayList<>();
+       for (int i = 0; i < nums.length; ++i) {
+           if (i > 0 && nums[i] == nums[i-1]) continue;
+           int l = i + 1;
+           int r = nums.length - 1;
+           while (l < r) {
+               if (l > i + 1 && nums[l] == nums[l-1]) {
+                   l++;
+                   continue;
+               }
+               int sum = nums[i] + nums[l] + nums[r];
+               if (sum == 0) {
+                   res.add(List.of(nums[i],nums[l],nums[r]));
+                   l++;
+                   r--;
+               } else if (sum > 0) {
+                   r--;
+               } else {
+                   l++;
+               }
+           }
+       }
+       return res;
+    }
+
+}

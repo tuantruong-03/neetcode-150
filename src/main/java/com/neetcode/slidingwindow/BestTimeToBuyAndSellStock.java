@@ -28,3 +28,21 @@ public class BestTimeToBuyAndSellStock {
         return max;
     }
 }
+
+class BestTimeToBuyAndSellStockPractice {
+    public int maxProfit(int[] prices) {
+        int prev = 0;
+        int next = prev + 1;
+        int max = 0;
+        while (next < prices.length) {
+            if (prices[next] <= prices[prev]) {
+                prev = next;
+                next++;
+                continue;
+            }
+            max = Math.max(max, prices[next] - prices[prev]);
+            next++;
+        }
+        return max;
+    }
+}

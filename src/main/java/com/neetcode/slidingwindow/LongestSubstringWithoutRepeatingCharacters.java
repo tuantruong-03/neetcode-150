@@ -52,3 +52,26 @@ public class LongestSubstringWithoutRepeatingCharacters {
         return max;
     }
 }
+
+class LongestSubstringWithoutRepeatingCharactersPractice {
+    public int lengthOfLongestSubstring(String s) {
+        Map<Character, Integer> characterIndex = new HashMap<>(); // Char -> Index
+        int back = 0;
+        int front = 0;
+        int longest = 0;
+        while (front < s.length()) {
+            char frontChar = s.charAt(front);
+            if (characterIndex.containsKey(frontChar) && characterIndex.get(frontChar) >= back) {
+                back = characterIndex.get(frontChar) + 1;
+            }
+            characterIndex.put(frontChar, front);
+            longest = Math.max(longest, front - back + 1);
+            front++;
+        }
+        return longest;
+    }
+
+    public static void main(String[] args) {
+        new LongestSubstringWithoutRepeatingCharactersPractice().lengthOfLongestSubstring("abcabcbb");
+    }
+}

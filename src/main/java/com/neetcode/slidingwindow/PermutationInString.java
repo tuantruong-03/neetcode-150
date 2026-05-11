@@ -37,3 +37,46 @@ public class PermutationInString {
         return false;
     }
 }
+
+class PermutationInStringPractice {
+    public boolean checkInclusion(String s1, String s2) {
+        if (s1.length() > s2.length()) return false;
+        Map<Character, Integer> need = new HashMap<>();
+        Map<Character, Integer> window = new HashMap<>();
+        for (Character c : s1.toCharArray()) {
+            need.put(c, need.getOrDefault(c,0) + 1);
+        }
+
+        int l = 0;
+        int r = 0;
+        int valid = 0;
+        while (r < s2.length()) {
+            char c = s2.charAt(r);
+            r++;
+            if (need.containsKey(c)) {
+                window.put(c, window.getOrDefault(c, 0) + 1);
+
+                if (window.get(c).equals(need.get(c))) {
+                    valid++;
+                }
+            }
+
+            // shrink window
+            while(r - l >= s1.length()) {
+                if (valid == need.size()) {
+                    return true;
+                }
+                // this window is not the permutation of s1, so we have to move "l" pointer forward
+                char d = s2.charAt(l);
+                l++;
+                if (need.containsKey(d)) {
+                    if (window.get(d).equals(need.get(d))) {
+                        valid--;
+                    }
+                    window.put(d, window.get(d) - 1);
+                }
+            }
+        }
+        return false;
+    }
+}

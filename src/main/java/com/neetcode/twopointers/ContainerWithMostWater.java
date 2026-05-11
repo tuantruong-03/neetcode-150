@@ -31,3 +31,24 @@ public class ContainerWithMostWater {
         return max; // Return the largest area found
     }
 }
+
+class ContainerWithMostWaterPractice {
+    public int maxArea(int[] height) {
+        int max = Integer.MIN_VALUE;
+        int l = 0;
+        int r = height.length - 1;
+        while (l < r) {
+            int area = Math.min(height[l], height[r])*(r-l);
+            max = Math.max(max, area);
+            if (height[l] < height[r]) {
+                l++;
+            } else if (height[l] > height[r]) {
+                r--;
+            } else {
+                l++;
+                r--;
+            }
+        }
+        return max;
+    }
+}

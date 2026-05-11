@@ -34,3 +34,20 @@ public class ValidAnagram {
         return true;
     }
 }
+
+class ValidAnagramPractice {
+    public boolean isAnagram(String s, String t) {
+        Map<Character, Integer> sMap = new HashMap<>();
+        for (char c : s.toCharArray()) {
+            int count = sMap.getOrDefault(c, 0) + 1;
+            sMap.put(c, count);
+        }
+        for (char c : t.toCharArray()) {
+            if (!sMap.containsKey(c)) return false;
+            int remain = sMap.get(c) - 1;
+            sMap.put(c, remain);
+            if (remain == 0) sMap.remove(c);
+        }
+        return sMap.isEmpty();
+    }
+}
