@@ -23,3 +23,28 @@ public class DiameterOfBinaryTree {
         return Math.max(left, right);
     }
 }
+
+class DiameterOfBinaryTreePractice {
+    private int diameter = 0;
+    public int diameterOfBinaryTree(TreeNode root) {
+        vertexDepth(root);
+        return diameter;
+    }
+
+    private int vertexDepth(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        int left = 0;
+        if (root.left != null) {
+            left = 1 + vertexDepth(root.left);
+        }
+        int right = 0;
+        if (root.right != null) {
+            right = 1 + vertexDepth(root.right);
+        }
+        diameter = Math.max(diameter, left + right);
+        return Math.max(left, right);
+    }
+
+}

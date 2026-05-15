@@ -87,3 +87,51 @@ public class KClosestPointsToOrigin {
         points[rowB] = tempRow;
     }
 }
+
+
+class KClosestPointsToOriginWithQuickSelect {
+    public int[][] kClosest(int[][] points, int k) {
+        int target = points.length - k;
+        int pivot = quickSelect(points, 0, points.length  - 1, target);
+        int [][] res = new int[k][];
+        for (int i = 0; i < k;++i) {
+            res[i] = points[pivot++];
+        }
+        return res;
+    }
+
+    private int quickSelect(int[][] points, int l, int r, int k) {
+        if (l == r) return l;
+        int low = l;
+        int high = r - 1;
+        int pivot = r ;
+        int pivotVal = distance(points[pivot]);
+        while (low <= high) {
+            while (low <= high && distance(points[low]) >= pivotVal) low++;
+            while (low <= high && distance(points[high]) <= pivotVal) high--;
+            if (low <= high) {
+                swap(points, low, high);
+                low++;
+                high--;
+            }
+        }
+        swap(points, low, r);
+        pivot = low;
+        if (k == pivot) return pivot;
+        if (k < pivot) {
+            return quickSelect(points, l, pivot - 1, k);
+        } else {
+            return quickSelect(points, pivot + 1, r, k);
+        }
+    }
+
+    private int distance(int[] point) {
+        return point[0]*point[0] + point[1]*point[1];
+    }
+
+    private void swap(int[][] points, int rowA, int rowB) {
+        int[] tempRow = points[rowA];
+        points[rowA] = points[rowB];
+        points[rowB] = tempRow;
+    }
+}
